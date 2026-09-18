@@ -1,0 +1,32 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: hr-system #微服务名字，nacos注册用
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/re_hr?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: '000000'
+  cloud:
+    loadbalancer:
+      cache:
+        enabled: false
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+#      config:
+#        server-addr: 127.0.0.1:8848
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.hrsystem.entity
+  configuration:
+    map-underscore-to-camel-case: true
+rocketmq:
+  name-server: 192.168.217.130:9876
+  producer:
+    group: hr-system-producer-group
+
+

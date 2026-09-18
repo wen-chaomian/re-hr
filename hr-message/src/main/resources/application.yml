@@ -1,0 +1,22 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: hr-message
+  datasource:
+    driver‑class‑name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/re_hr?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: '000000'
+  cloud:
+    nacos:
+      discovery:
+        server‑addr: 127.0.0.1:8848
+rocketmq:
+  name‑server: 192.168.217.130:9876
+
+mybatis‑plus:
+  mapper‑locations: classpath:mapper/*.xml
+  configuration:
+    map‑underscore‑to‑camel‑case: true
