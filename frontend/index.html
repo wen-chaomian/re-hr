@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>奶龙HR管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #FFF8E1;
+            color: #5D4E37;
+        }
+        .header {
+            background: linear-gradient(135deg, #FFD93D 0%, #FFE66D 100%);
+            padding: 24px 40px;
+            box-shadow: 0 4px 16px rgba(255, 217, 61, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .header-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            padding: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .header-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .header-text h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #5D4E37;
+        }
+        .header-text p {
+            margin-top: 4px;
+            color: #8B7355;
+            font-size: 14px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 24px auto;
+            padding: 0 20px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 12px 24px;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            border: 2px solid #FFE66D;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            color: #8B7355;
+        }
+        .tab.active {
+            background: #FFD93D;
+            color: #5D4E37;
+            border-color: #FFD93D;
+            box-shadow: 0 4px 12px rgba(255, 217, 61, 0.4);
+        }
+        .tab:hover:not(.active) {
+            border-color: #FFD93D;
+            background: #FFF3B0;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(255, 217, 61, 0.15);
+            margin-bottom: 20px;
+            border: 2px solid #FFF3B0;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #5D4E37;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #FFD93D;
+            color: #5D4E37;
+            box-shadow: 0 4px 12px rgba(255, 217, 61, 0.4);
+        }
+        .btn-primary:hover {
+            background: #FFC107;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 217, 61, 0.5);
+        }
+        .btn-danger {
+            background: #FF6B6B;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #FF5252;
+            transform: translateY(-2px);
+        }
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+            border-radius: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        th, td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #FFF3B0;
+        }
+        th {
+            background: #FFF8E1;
+            font-weight: 600;
+            color: #8B7355;
+            font-size: 13px;
+        }
+        th:first-child {
+            border-radius: 12px 0 0 0;
+        }
+        th:last-child {
+            border-radius: 0 12px 0 0;
+        }
+        tr:hover {
+            background: #FFFDE7;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(93, 78, 55, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+        .modal {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 3px solid #FFD93D;
+        }
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #5D4E37;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+        .form-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-item label {
+            font-size: 13px;
+            color: #8B7355;
+            font-weight: 500;
+        }
+        .form-item input, .form-item select {
+            padding: 10px 14px;
+            border: 2px solid #FFE66D;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .form-item input:focus, .form-item select:focus {
+            outline: none;
+            border-color: #FFD93D;
+            box-shadow: 0 0 0 3px rgba(255, 217, 61, 0.3);
+        }
+        .modal-footer {
+            margin-top: 28px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .badge-male {
+            background: #E3F2FD;
+            color: #1976D2;
+        }
+        .badge-female {
+            background: #FCE4EC;
+            color: #C2185B;
+        }
+        .empty {
+            text-align: center;
+            padding: 50px;
+            color: #B8A98C;
+            font-size: 14px;
+        }
+        .page-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #8B7355;
+        }
+        .pagination {
+            display: flex;
+            gap: 8px;
+        }
+        .pagination button {
+            padding: 8px 16px;
+            border: 2px solid #FFE66D;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #5D4E37;
+            transition: all 0.3s;
+        }
+        .pagination button:hover:not(:disabled) {
+            background: #FFD93D;
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .log-item {
+            padding: 16px;
+            border-left: 4px solid #FFD93D;
+            background: #FFF8E1;
+            margin-bottom: 10px;
+            border-radius: 0 12px 12px 0;
+        }
+        .log-item .log-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #5D4E37;
+        }
+        .log-item .log-time {
+            font-size: 12px;
+            color: #B8A98C;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-img">
+            <img src="https://aka.doubaocdn.com/s/VQ7MAYUlz6" alt="奶龙">
+        </div>
+        <div class="header-text">
+            <h1>奶龙HR管理系统</h1>
+            <p>员工信息管理 · 操作日志追踪 · 奶龙为你服务</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" data-tab="employee">员工管理</div>
+            <div class="tab" data-tab="log">操作日志</div>
+        </div>
+
+        <!-- 员工管理 -->
+        <div id="tab-employee" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🐉 员工列表</div>
+                    <button class="btn btn-primary" onclick="openAddModal()">+ 新增员工</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>工号</th>
+                            <th>姓名</th>
+                            <th>性别</th>
+                            <th>电话</th>
+                            <th>部门</th>
+                            <th>职位</th>
+                            <th>入职日期</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeeTableBody">
+                        <tr><td colspan="8" class="empty">加载中...</td></tr>
+                    </tbody>
+                </table>
+                <div class="page-info">
+                    <span id="totalCount">共 0 条</span>
+                    <div class="pagination">
+                        <button onclick="prevPage()" id="prevBtn">上一页</button>
+                        <button onclick="nextPage()" id="nextBtn">下一页</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 操作日志 -->
+        <div id="tab-log" class="tab-content" style="display:none;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📋 操作日志</div>
+                    <button class="btn btn-primary" onclick="loadLogs()">刷新</button>
+                </div>
+                <div id="logList">
+                    <div class="empty">加载中...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增/编辑员工弹窗 -->
+    <div class="modal-overlay" id="employeeModal">
+        <div class="modal">
+            <div class="modal-title" id="modalTitle">新增员工</div>
+            <div class="form-grid">
+                <div class="form-item">
+                    <label>姓名</label>
+                    <input type="text" id="empName" placeholder="请输入姓名">
+                </div>
+                <div class="form-item">
+                    <label>性别</label>
+                    <select id="empGender">
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </div>
+                <div class="form-item">
+                    <label>出生日期</label>
+                    <input type="date" id="empBirthday">
+                </div>
+                <div class="form-item">
+                    <label>电话</label>
+                    <input type="text" id="empPhone" placeholder="请输入电话">
+                </div>
+                <div class="form-item">
+                    <label>邮箱</label>
+                    <input type="text" id="empEmail" placeholder="请输入邮箱">
+                </div>
+                <div class="form-item">
+                    <label>地址</label>
+                    <input type="text" id="empAddress" placeholder="请输入地址">
+                </div>
+                <div class="form-item">
+                    <label>入职日期</label>
+                    <input type="date" id="empBeginDate">
+                </div>
+                <div class="form-item">
+                    <label>部门</label>
+                    <select id="empDept">
+                        <option value="2">技术部</option>
+                        <option value="3">产品部</option>
+                        <option value="4">运营部</option>
+                        <option value="5">人事部</option>
+                    </select>
+                </div>
+                <div class="form-item">
+                    <label>职位</label>
+                    <select id="empPos">
+                        <option value="1">Java开发工程师</option>
+                        <option value="2">前端开发工程师</option>
+                        <option value="3">产品经理</option>
+                        <option value="4">运营专员</option>
+                        <option value="5">HR专员</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveEmployee()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8081';
+        let currentPage = 1;
+        let pageSize = 10;
+        let total = 0;
+        let editingId = null;
+
+        // 切换 Tab
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+                document.getElementById('tab-' + tab.dataset.tab).style.display = 'block';
+                if (tab.dataset.tab === 'log') loadLogs();
+            });
+        });
+
+        // 加载员工列表
+        async function loadEmployees() {
+            try {
+                const res = await fetch(`${API_BASE}/employee?page=${currentPage}&size=${pageSize}`);
+                const data = await res.json();
+                total = data.total;
+                document.getElementById('totalCount').textContent = `共 ${total} 条`;
+                
+                const tbody = document.getElementById('employeeTableBody');
+                if (data.data && data.data.length > 0) {
+                    tbody.innerHTML = data.data.map(emp => `
+                        <tr>
+                            <td>${emp.workID || '-'}</td>
+                            <td>${emp.name}</td>
+                            <td><span class="badge ${emp.gender === '男' ? 'badge-male' : 'badge-female'}">${emp.gender || '-'}</span></td>
+                            <td>${emp.phone || '-'}</td>
+                            <td>${emp.department ? emp.department.name : '-'}</td>
+                            <td>${emp.position ? emp.position.name : '-'}</td>
+                            <td>${emp.beginDate ? emp.beginDate.substring(0, 10) : '-'}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick='openEditModal(${JSON.stringify(emp).replace(/'/g, "\\'")})'>编辑</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteEmployee(${emp.id})">删除</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="8" class="empty">暂无数据，点击右上角新增员工~</td></tr>';
+                }
+                
+                document.getElementById('prevBtn').disabled = currentPage <= 1;
+                document.getElementById('nextBtn').disabled = currentPage * pageSize >= total;
+            } catch (e) {
+                document.getElementById('employeeTableBody').innerHTML = '<tr><td colspan="8" class="empty">🥺 连接失败，请确保后端服务已启动</td></tr>';
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                loadEmployees();
+            }
+        }
+
+        function nextPage() {
+            if (currentPage * pageSize < total) {
+                currentPage++;
+                loadEmployees();
+            }
+        }
+
+        // 打开新增弹窗
+        function openAddModal() {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = '✨ 新增员工';
+            document.getElementById('employeeModal').classList.add('show');
+        }
+
+        // 打开编辑弹窗
+        function openEditModal(emp) {
+            editingId = emp.id;
+            document.getElementById('modalTitle').textContent = '✏️ 编辑员工';
+            document.getElementById('empName').value = emp.name || '';
+            document.getElementById('empGender').value = emp.gender || '男';
+            document.getElementById('empBirthday').value = emp.birthday ? emp.birthday.substring(0, 10) : '';
+            document.getElementById('empPhone').value = emp.phone || '';
+            document.getElementById('empEmail').value = emp.email || '';
+            document.getElementById('empAddress').value = emp.address || '';
+            document.getElementById('empBeginDate').value = emp.beginDate ? emp.beginDate.substring(0, 10) : '';
+            document.getElementById('empDept').value = emp.departmentId || 2;
+            document.getElementById('empPos').value = emp.posId || 1;
+            document.getElementById('employeeModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('employeeModal').classList.remove('show');
+        }
+
+        // 保存员工
+        async function saveEmployee() {
+            const data = {
+                name: document.getElementById('empName').value,
+                gender: document.getElementById('empGender').value,
+                birthday: document.getElementById('empBirthday').value,
+                phone: document.getElementById('empPhone').value,
+                email: document.getElementById('empEmail').value,
+                address: document.getElementById('empAddress').value,
+                beginDate: document.getElementById('empBeginDate').value,
+                departmentId: parseInt(document.getElementById('empDept').value),
+                posId: parseInt(document.getElementById('empPos').value)
+            };
+
+            try {
+                if (editingId) {
+                    data.id = editingId;
+                    await fetch(`${API_BASE}/employee/update`, {
+                        method: 'PUT',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    });
+                } else {
+                    await fetch(`${API_BASE}/employee`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    });
+                }
+                closeModal();
+                loadEmployees();
+            } catch (e) {
+                alert('保存失败：' + e.message);
+            }
+        }
+
+        // 删除员工
+        async function deleteEmployee(id) {
+            if (!confirm('确定要删除这个员工吗？')) return;
+            try {
+                await fetch(`${API_BASE}/employee/${id}`, {method: 'DELETE'});
+                loadEmployees();
+            } catch (e) {
+                alert('删除失败：' + e.message);
+            }
+        }
+
+        // 加载操作日志
+        async function loadLogs() {
+            try {
+                const res = await fetch(`${API_BASE}/employee/test/log`);
+                const data = await res.json();
+                const logList = document.getElementById('logList');
+                if (data && data.length > 0) {
+                    logList.innerHTML = data.map(log => `
+                        <div class="log-item">
+                            <div class="log-title">${log.operate || '未知操作'}</div>
+                            <div class="log-time">${log.addDate || ''}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    logList.innerHTML = '<div class="empty">暂无操作日志~</div>';
+                }
+            } catch (e) {
+                document.getElementById('logList').innerHTML = '<div class="empty">🥺 连接失败，请确保后端服务已启动</div>';
+            }
+        }
+
+        // 初始化
+        loadEmployees();
+    </script>
+</body>
+</html>
